@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - MotoShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">MotoShop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Categorie
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="categoria.html?cat=caschi">Caschi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=abbigliamento">Abbigliamento</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=accessori">Accessori moto</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=ricambi">Ricambi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=manutenzione">Manutenzione</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=outlet">Outlet</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="chi-siamo.html">Chi siamo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contatti.html">Contatti</a>
+                        </li>
+                    </ul>
+                    <div class="d-flex">
+                        <a href="account.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <a href="wishlist.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                        <a href="carrello.html" class="btn btn-outline-light position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                3
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="container py-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="carrello.html">Carrello</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <h1 class="h2">Checkout</h1>
+                    <p>Completa i dati per finalizzare l'acquisto.</p>
+                </div>
+            </div>
+
+            <!-- Barra progresso checkout -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="position-relative checkout-progress mb-4">
+                        <div class="progress" style="height: 1px;">
+                            <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="position-absolute top-0 start-0 translate-middle">
+                            <button class="btn btn-primary btn-sm rounded-pill" type="button">1</button>
+                        </div>
+                        <div class="position-absolute top-0 start-50 translate-middle">
+                            <button class="btn btn-primary btn-sm rounded-pill active" type="button">2</button>
+                        </div>
+                        <div class="position-absolute top-0 start-100 translate-middle">
+                            <button class="btn btn-secondary btn-sm rounded-pill" type="button">3</button>
+                        </div>
+                        <div class="checkout-labels">
+                            <span class="position-absolute start-0 translate-middle text-center" style="top: 24px; width: 120px; margin-left: -60px;">Carrello</span>
+                            <span class="position-absolute start-50 translate-middle text-center" style="top: 24px; width: 120px; margin-left: -60px;"><strong>Informazioni</strong></span>
+                            <span class="position-absolute start-100 translate-middle text-center" style="top: 24px; width: 120px; margin-left: -60px;">Pagamento</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-5">
+                <!-- Form di checkout -->
+                <div class="col-md-7 col-lg-8">
+                    <form class="needs-validation" novalidate>
+                        <!-- Informazioni cliente -->
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h3 class="h5 mb-0">Informazioni personali</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-sm-6">
+                                        <label for="firstName" class="form-label">Nome</label>
+                                        <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                                        <div class="invalid-feedback">
+                                            Nome richiesto.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label for="lastName" class="form-label">Cognome</label>
+                                        <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                                        <div class="invalid-feedback">
+                                            Cognome richiesto.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="tu@esempio.com" required>
+                                        <div class="invalid-feedback">
+                                            Inserisci un indirizzo email valido.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <label for="phone" class="form-label">Telefono</label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="+39 xxx xxxxxxx">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indirizzo di spedizione -->
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h3 class="h5 mb-0">Indirizzo di spedizione</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="address" class="form-label">Indirizzo</label>
+                                        <input type="text" class="form-control" id="address" placeholder="Via Roma 123" required>
+                                        <div class="invalid-feedback">
+                                            Inserisci l'indirizzo di spedizione.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <label for="city" class="form-label">Città</label>
+                                        <input type="text" class="form-control" id="city" placeholder="" required>
+                                        <div class="invalid-feedback">
+                                            Città richiesta.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="province" class="form-label">Provincia</label>
+                                        <select class="form-select" id="province" required>
+                                            <option value="">Seleziona...</option>
+                                            <option>Milano</option>
+                                            <option>Roma</option>
+                                            <option>Napoli</option>
+                                            <option>Torino</option>
+                                            <option>Firenze</option>
+                                            <!-- Altre province -->
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Seleziona una provincia valida.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="zip" class="form-label">CAP</label>
+                                        <input type="text" class="form-control" id="zip" placeholder="" required>
+                                        <div class="invalid-feedback">
+                                            CAP richiesto.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="same-address">
+                                    <label class="form-check-label" for="same-address">L'indirizzo di fatturazione è lo stesso di spedizione</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="save-info">
+                                    <label class="form-check-label" for="save-info">Salva queste informazioni per la prossima volta</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Note -->
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-light">
+                                <h3 class="h5 mb-0">Note</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="notes" class="form-label">Note per la spedizione (opzionale)</label>
+                                    <textarea class="form-control" id="notes" rows="3" placeholder="Informazioni aggiuntive per la consegna..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pulsanti azione -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="carrello.html" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Torna al carrello
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Procedi al pagamento<i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Riepilogo ordine -->
+                <div class="col-md-5 col-lg-4">
+                    <div class="card shadow-sm mb-4 position-sticky" style="top: 2rem;">
+                        <div class="card-header bg-light">
+                            <h3 class="h5 mb-0">Riepilogo ordine</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="checkout-products">
+                                <!-- Prodotto 1 -->
+                                <div class="d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <img src="https://via.placeholder.com/60x60" alt="Casco Integrale Pro" width="60" height="60" class="img-thumbnail">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="my-0">Casco Integrale Pro</h6>
+                                        <small class="text-muted">Colore: Nero, Taglia: M</small>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">1x</small>
+                                            <span>€199,99</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Prodotto 2 -->
+                                <div class="d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <img src="https://via.placeholder.com/60x60" alt="Guanti Tecnici Pro" width="60" height="60" class="img-thumbnail">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="my-0">Guanti Tecnici Pro</h6>
+                                        <small class="text-muted">Colore: Nero/Rosso, Taglia: L</small>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">1x</small>
+                                            <span>€59,99</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Prodotto 3 -->
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <img src="https://via.placeholder.com/60x60" alt="Interfono Bluetooth Pro" width="60" height="60" class="img-thumbnail">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="my-0">Interfono Bluetooth Pro</h6>
+                                        <small class="text-muted">Comunicazione fino a 1 km</small>
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">1x</small>
+                                            <span>€129,99</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Totali -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotale</span>
+                                <span>€389,97</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Spedizione</span>
+                                <span>€5,99</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 text-success">
+                                <span>Sconto</span>
+                                <span>-€0,00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold">Totale (IVA inclusa)</span>
+                                <span class="fw-bold fs-5">€395,96</span>
+                            </div>
+
+                            <!-- Sicurezza -->
+                            <div class="mt-4 text-center">
+                                <small class="text-muted d-block mb-2">Pagamento sicuro</small>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <i class="fas fa-lock text-secondary"></i>
+                                    <i class="fab fa-cc-visa text-secondary"></i>
+                                    <i class="fab fa-cc-mastercard text-secondary"></i>
+                                    <i class="fab fa-cc-paypal text-secondary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>MotoShop</h5>
+                    <p>Il tuo negozio online per accessori e abbigliamento moto di qualità.</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Informazioni</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="chi-siamo.html" class="text-white">Chi siamo</a></li>
+                        <li><a href="condizioni-vendita.html" class="text-white">Condizioni di vendita</a></li>
+                        <li><a href="privacy.html" class="text-white">Privacy policy</a></li>
+                        <li><a href="contatti.html" class="text-white">Contatti</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Assistenza</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="faq.html" class="text-white">FAQ</a></li>
+                        <li><a href="spedizioni.html" class="text-white">Spedizioni</a></li>
+                        <li><a href="resi.html" class="text-white">Resi e rimborsi</a></li>
+                        <li><a href="tracking.html" class="text-white">Tracking ordine</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contatti</h5>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt me-2"></i> Via delle Moto, 123 - Milano</p>
+                        <p><i class="fas fa-phone me-2"></i> +39 02 1234567</p>
+                        <p><i class="fas fa-envelope me-2"></i> info@motoshop.it</p>
+                    </address>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 MotoShop. Tutti i diritti riservati.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <img src="https://via.placeholder.com/50x30" alt="Visa" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="Mastercard" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="PayPal" class="payment-icon">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Validazione form
+        (() => {
+            'use strict'
+
+            // Form da validare
+            const forms = document.querySelectorAll('.needs-validation')
+
+            // Previeni invio e mostra feedback
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    } else {
+                        // Qui in una vera implementazione salveremmo i dati e procederemmo al pagamento
+                        event.preventDefault()
+                        alert('Dati salvati! Verrai reindirizzato alla pagina di pagamento...')
+                        // Redirect in una vera implementazione
+                        // window.location.href = 'pagamento.html';
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+</body>
+</html> 

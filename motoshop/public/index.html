@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoShop - Il tuo negozio online per accessori moto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">MotoShop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Categorie
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="categoria.html?cat=caschi">Caschi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=abbigliamento">Abbigliamento</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=accessori">Accessori moto</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=ricambi">Ricambi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=manutenzione">Manutenzione</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=outlet">Outlet</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="chi-siamo.html">Chi siamo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contatti.html">Contatti</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex me-2">
+                        <input class="form-control me-2" type="search" placeholder="Cerca prodotti...">
+                        <button class="btn btn-outline-light" type="submit">Cerca</button>
+                    </form>
+                    <div class="d-flex">
+                        <a href="account.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <a href="wishlist.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                        <a href="carrello.html" class="btn btn-outline-light position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section / Slider -->
+        <section class="hero-slider">
+            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="d-block w-100 hero-slide" style="background-color: #212529;">
+                            <div class="container text-white py-5 d-flex flex-column justify-content-center" style="height: 400px;">
+                                <h2>Nuova collezione estiva</h2>
+                                <p class="lead">Scopri l'abbigliamento perfetto per le tue avventure su due ruote</p>
+                                <a href="categoria.html?cat=abbigliamento" class="btn btn-primary btn-lg mt-3 align-self-start">Scopri ora</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="d-block w-100 hero-slide" style="background-color: #343a40;">
+                            <div class="container text-white py-5 d-flex flex-column justify-content-center" style="height: 400px;">
+                                <h2>Caschi di ultima generazione</h2>
+                                <p class="lead">Sicurezza e comfort per ogni tipo di motociclista</p>
+                                <a href="categoria.html?cat=caschi" class="btn btn-primary btn-lg mt-3 align-self-start">Esplora la gamma</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="d-block w-100 hero-slide" style="background-color: #495057;">
+                            <div class="container text-white py-5 d-flex flex-column justify-content-center" style="height: 400px;">
+                                <h2>Accessori e ricambi</h2>
+                                <p class="lead">Tutto ciò che serve per la tua moto</p>
+                                <a href="categoria.html?cat=accessori" class="btn btn-primary btn-lg mt-3 align-self-start">Scopri l'assortimento</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Categorie in evidenza -->
+        <section class="categories-section py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Categorie in evidenza</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-helmet-safety fa-4x mb-3"></i>
+                                <h3 class="card-title">Caschi</h3>
+                                <p class="card-text">Esplora la nostra selezione di caschi di alta qualità per ogni tipo di moto.</p>
+                                <a href="categoria.html?cat=caschi" class="btn btn-outline-dark">Scopri</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-tshirt fa-4x mb-3"></i>
+                                <h3 class="card-title">Abbigliamento</h3>
+                                <p class="card-text">Giacche, pantaloni e accessori per la massima protezione e comfort.</p>
+                                <a href="categoria.html?cat=abbigliamento" class="btn btn-outline-dark">Scopri</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-motorcycle fa-4x mb-3"></i>
+                                <h3 class="card-title">Accessori</h3>
+                                <p class="card-text">Tutto ciò che serve per personalizzare e migliorare la tua moto.</p>
+                                <a href="categoria.html?cat=accessori" class="btn btn-outline-dark">Scopri</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prodotti in vetrina -->
+        <section class="featured-products py-5 bg-light">
+            <div class="container">
+                <h2 class="text-center mb-4">Prodotti in vetrina</h2>
+                <ul class="nav nav-tabs justify-content-center mb-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button" role="tab">Novità</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="offers-tab" data-bs-toggle="tab" data-bs-target="#offers" type="button" role="tab">Offerte</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="bestsellers-tab" data-bs-toggle="tab" data-bs-target="#bestsellers" type="button" role="tab">Più venduti</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="productTabsContent">
+                    <div class="tab-pane fade show active" id="new" role="tabpanel">
+                        <div class="row g-4">
+                            <!-- Esempio prodotto 1 -->
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 product-card">
+                                    <div class="position-relative">
+                                        <img src="https://via.placeholder.com/300x300" class="card-img-top" alt="Casco Integrale Pro">
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-2">Nuovo</span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Casco Integrale Pro</h5>
+                                        <p class="card-text text-muted small">Protezione avanzata con massimo comfort</p>
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                            <span class="fw-bold">€199,99</span>
+                                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-cart-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Esempio prodotto 2 -->
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 product-card">
+                                    <div class="position-relative">
+                                        <img src="https://via.placeholder.com/300x300" class="card-img-top" alt="Giacca in pelle">
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-2">Nuovo</span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Giacca in pelle Sport</h5>
+                                        <p class="card-text text-muted small">Protezione e stile per ogni stagione</p>
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                            <span class="fw-bold">€249,99</span>
+                                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-cart-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Esempio prodotto 3 -->
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 product-card">
+                                    <div class="position-relative">
+                                        <img src="https://via.placeholder.com/300x300" class="card-img-top" alt="Guanti tecnici">
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-2">Nuovo</span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Guanti Tecnici Pro</h5>
+                                        <p class="card-text text-muted small">Massima sensibilità e protezione</p>
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                            <span class="fw-bold">€59,99</span>
+                                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-cart-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Esempio prodotto 4 -->
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 product-card">
+                                    <div class="position-relative">
+                                        <img src="https://via.placeholder.com/300x300" class="card-img-top" alt="Interfono Bluetooth">
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-2">Nuovo</span>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">Interfono Bluetooth Pro</h5>
+                                        <p class="card-text text-muted small">Comunicazione chiara fino a 1 km</p>
+                                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                                            <span class="fw-bold">€129,99</span>
+                                            <button class="btn btn-sm btn-outline-primary"><i class="fas fa-cart-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="offers" role="tabpanel">
+                        <div class="row g-4">
+                            <!-- Inserire qui i prodotti in offerta -->
+                            <div class="col-12 text-center">
+                                <p>Prodotti in offerta da caricare dinamicamente</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="bestsellers" role="tabpanel">
+                        <div class="row g-4">
+                            <!-- Inserire qui i prodotti più venduti -->
+                            <div class="col-12 text-center">
+                                <p>Prodotti più venduti da caricare dinamicamente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Banner stagionale -->
+        <section class="seasonal-banner py-5">
+            <div class="container">
+                <div class="row g-0">
+                    <div class="col-12">
+                        <div class="banner-container bg-dark text-white p-4 p-md-5 rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3>Preparati per la stagione estiva!</h3>
+                                    <p class="lead mb-4">Scopri la nostra collezione di abbigliamento traspirante e accessori per le tue avventure estive in moto.</p>
+                                    <a href="categoria.html?cat=estate" class="btn btn-light">Scopri la collezione</a>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="fas fa-sun fa-5x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="newsletter-section py-5 bg-light">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <h3>Iscriviti alla newsletter</h3>
+                        <p class="mb-4">Resta aggiornato sulle ultime novità, offerte esclusive e promozioni speciali.</p>
+                        <form class="row g-3 justify-content-center">
+                            <div class="col-md-8">
+                                <input type="email" class="form-control" placeholder="Inserisci la tua email">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">Iscriviti</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>MotoShop</h5>
+                    <p>Il tuo negozio online per accessori e abbigliamento moto di qualità.</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Informazioni</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="chi-siamo.html" class="text-white">Chi siamo</a></li>
+                        <li><a href="condizioni-vendita.html" class="text-white">Condizioni di vendita</a></li>
+                        <li><a href="privacy.html" class="text-white">Privacy policy</a></li>
+                        <li><a href="contatti.html" class="text-white">Contatti</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Assistenza</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="faq.html" class="text-white">FAQ</a></li>
+                        <li><a href="spedizioni.html" class="text-white">Spedizioni</a></li>
+                        <li><a href="resi.html" class="text-white">Resi e rimborsi</a></li>
+                        <li><a href="tracking.html" class="text-white">Tracking ordine</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contatti</h5>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt me-2"></i> Via delle Moto, 123 - Milano</p>
+                        <p><i class="fas fa-phone me-2"></i> +39 02 1234567</p>
+                        <p><i class="fas fa-envelope me-2"></i> info@motoshop.it</p>
+                    </address>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 MotoShop. Tutti i diritti riservati.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <img src="https://via.placeholder.com/50x30" alt="Visa" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="Mastercard" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="PayPal" class="payment-icon">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html> 

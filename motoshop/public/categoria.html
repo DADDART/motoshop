@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categoria - MotoShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">MotoShop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Categorie
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="categoria.html?cat=caschi">Caschi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=abbigliamento">Abbigliamento</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=accessori">Accessori moto</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=ricambi">Ricambi</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=manutenzione">Manutenzione</a></li>
+                                <li><a class="dropdown-item" href="categoria.html?cat=outlet">Outlet</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="chi-siamo.html">Chi siamo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contatti.html">Contatti</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex me-2">
+                        <input class="form-control me-2" type="search" placeholder="Cerca prodotti...">
+                        <button class="btn btn-outline-light" type="submit">Cerca</button>
+                    </form>
+                    <div class="d-flex">
+                        <a href="account.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-user"></i>
+                        </a>
+                        <a href="wishlist.html" class="btn btn-outline-light me-2">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                        <a href="carrello.html" class="btn btn-outline-light position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="container py-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page" id="categoria-breadcrumb">Categoria</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="py-4">
+        <div class="container">
+            <div class="row">
+                <!-- Filtri Laterali -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card rounded-3 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h3 class="h5 mb-0">Filtri</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Prezzo -->
+                            <div class="mb-4">
+                                <h4 class="h6 mb-3">Prezzo</h4>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" class="form-control form-control-sm me-2" placeholder="Min">
+                                    <span>-</span>
+                                    <input type="number" class="form-control form-control-sm ms-2" placeholder="Max">
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary mt-2 w-100">Applica</button>
+                            </div>
+
+                            <!-- Marca -->
+                            <div class="mb-4">
+                                <h4 class="h6 mb-3">Marca</h4>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="marca1">
+                                    <label class="form-check-label" for="marca1">
+                                        Alpinestars
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="marca2">
+                                    <label class="form-check-label" for="marca2">
+                                        Dainese
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="marca3">
+                                    <label class="form-check-label" for="marca3">
+                                        Shoei
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="marca4">
+                                    <label class="form-check-label" for="marca4">
+                                        AGV
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="marca5">
+                                    <label class="form-check-label" for="marca5">
+                                        Spidi
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Taglia (Solo per abbigliamento) -->
+                            <div class="mb-4" id="filtro-taglia">
+                                <h4 class="h6 mb-3">Taglia</h4>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-sm btn-outline-secondary">XS</button>
+                                    <button class="btn btn-sm btn-outline-secondary">S</button>
+                                    <button class="btn btn-sm btn-outline-secondary">M</button>
+                                    <button class="btn btn-sm btn-outline-secondary">L</button>
+                                    <button class="btn btn-sm btn-outline-secondary">XL</button>
+                                    <button class="btn btn-sm btn-outline-secondary">XXL</button>
+                                </div>
+                            </div>
+
+                            <!-- Colore -->
+                            <div>
+                                <h4 class="h6 mb-3">Colore</h4>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="color-option" style="background-color: #000;" title="Nero"></div>
+                                    <div class="color-option" style="background-color: #fff; border: 1px solid #ddd;" title="Bianco"></div>
+                                    <div class="color-option" style="background-color: #FF0000;" title="Rosso"></div>
+                                    <div class="color-option" style="background-color: #0000FF;" title="Blu"></div>
+                                    <div class="color-option" style="background-color: #FFFF00;" title="Giallo"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elenco Prodotti -->
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h2" id="categoria-titolo">Prodotti</h1>
+                        <div class="d-flex align-items-center">
+                            <label for="sort-select" class="me-2">Ordina per:</label>
+                            <select class="form-select form-select-sm" id="sort-select" style="width: auto;">
+                                <option value="relevance">Rilevanza</option>
+                                <option value="price-asc">Prezzo: crescente</option>
+                                <option value="price-desc">Prezzo: decrescente</option>
+                                <option value="name-asc">Nome: A-Z</option>
+                                <option value="name-desc">Nome: Z-A</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Griglia Prodotti -->
+                    <div class="row g-4" id="product-grid">
+                        <!-- I prodotti verranno caricati dinamicamente -->
+                    </div>
+
+                    <!-- Paginazione -->
+                    <nav aria-label="Page navigation" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Precedente</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Successiva</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>MotoShop</h5>
+                    <p>Il tuo negozio online per accessori e abbigliamento moto di qualità.</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Informazioni</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="chi-siamo.html" class="text-white">Chi siamo</a></li>
+                        <li><a href="condizioni-vendita.html" class="text-white">Condizioni di vendita</a></li>
+                        <li><a href="privacy.html" class="text-white">Privacy policy</a></li>
+                        <li><a href="contatti.html" class="text-white">Contatti</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5>Assistenza</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="faq.html" class="text-white">FAQ</a></li>
+                        <li><a href="spedizioni.html" class="text-white">Spedizioni</a></li>
+                        <li><a href="resi.html" class="text-white">Resi e rimborsi</a></li>
+                        <li><a href="tracking.html" class="text-white">Tracking ordine</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contatti</h5>
+                    <address>
+                        <p><i class="fas fa-map-marker-alt me-2"></i> Via delle Moto, 123 - Milano</p>
+                        <p><i class="fas fa-phone me-2"></i> +39 02 1234567</p>
+                        <p><i class="fas fa-envelope me-2"></i> info@motoshop.it</p>
+                    </address>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2025 MotoShop. Tutti i diritti riservati.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <img src="https://via.placeholder.com/50x30" alt="Visa" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="Mastercard" class="payment-icon">
+                    <img src="https://via.placeholder.com/50x30" alt="PayPal" class="payment-icon">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recupera la categoria dalla URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoria = urlParams.get('cat');
+            
+            // Se non c'è categoria, reindirizza alla home
+            if (!categoria) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Aggiorna il titolo e il breadcrumb in base alla categoria
+            const categorieTitoli = {
+                'caschi': 'Caschi',
+                'abbigliamento': 'Abbigliamento',
+                'accessori': 'Accessori moto',
+                'ricambi': 'Ricambi',
+                'manutenzione': 'Manutenzione',
+                'outlet': 'Outlet',
+                'estate': 'Collezione Estate'
+            };
+            
+            const titolo = categorieTitoli[categoria] || 'Prodotti';
+            document.getElementById('categoria-titolo').textContent = titolo;
+            document.getElementById('categoria-breadcrumb').textContent = titolo;
+            document.title = `${titolo} - MotoShop`;
+            
+            // Mostra/nascondi filtri specifici in base alla categoria
+            if (categoria === 'abbigliamento') {
+                document.getElementById('filtro-taglia').style.display = 'block';
+            } else {
+                document.getElementById('filtro-taglia').style.display = 'none';
+            }
+            
+            // Carica i prodotti della categoria (simulati per la demo)
+            let productsHtml = '';
+            
+            // Numero di prodotti da mostrare nella griglia
+            const numProdotti = 12;
+            
+            // Generatore di prodotti demo basati sulla categoria
+            for (let i = 1; i <= numProdotti; i++) {
+                let productName, productDesc, productPrice;
+                const productImage = 'https://via.placeholder.com/300x300';
+                
+                switch(categoria) {
+                    case 'caschi':
+                        productName = `Casco ${['Integrale', 'Modulare', 'Jet', 'Cross'][i % 4]} Pro`;
+                        productDesc = 'Protezione avanzata con massimo comfort';
+                        productPrice = 149.99 + (i * 10);
+                        break;
+                        
+                    case 'abbigliamento':
+                        productName = `${['Giacca', 'Pantaloni', 'Guanti', 'Stivali'][i % 4]} Tecnici`;
+                        productDesc = 'Abbigliamento tecnico per ogni condizione';
+                        productPrice = 79.99 + (i * 15);
+                        break;
+                        
+                    case 'accessori':
+                        productName = `${['Interfono', 'Supporto Smartphone', 'Bauletto', 'Borsa'][i % 4]} Moto`;
+                        productDesc = 'Accessori di qualità per la tua moto';
+                        productPrice = 29.99 + (i * 5);
+                        break;
+                        
+                    case 'ricambi':
+                        productName = `${['Filtro Olio', 'Pastiglie Freno', 'Batteria', 'Candele'][i % 4]} Premium`;
+                        productDesc = 'Ricambi originali per le migliori prestazioni';
+                        productPrice = 19.99 + (i * 8);
+                        break;
+                        
+                    case 'manutenzione':
+                        productName = `${['Olio Motore', 'Sgrassatore', 'Lucidante', 'Kit Attrezzi'][i % 4]} Pro`;
+                        productDesc = 'Prodotti professionali per la manutenzione';
+                        productPrice = 14.99 + (i * 7);
+                        break;
+                        
+                    case 'outlet':
+                        productName = `${['Casco', 'Giacca', 'Guanti', 'Accessorio'][i % 4]} Outlet`;
+                        productDesc = 'Offerte speciali a prezzi scontati';
+                        productPrice = (99.99 + (i * 10)) * 0.7; // Prezzo scontato
+                        break;
+                        
+                    case 'estate':
+                        productName = `${['Giacca Estiva', 'Guanti Ventilati', 'Casco Leggero', 'T-Shirt Tecnica'][i % 4]}`;
+                        productDesc = 'Ideale per la stagione calda';
+                        productPrice = 39.99 + (i * 12);
+                        break;
+                        
+                    default:
+                        productName = `Prodotto ${i}`;
+                        productDesc = 'Descrizione prodotto';
+                        productPrice = 49.99 + (i * 5);
+                }
+                
+                productsHtml += `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 product-card">
+                        <div class="position-relative">
+                            <img src="${productImage}" class="card-img-top" alt="${productName}">
+                            ${i % 5 === 0 ? '<span class="badge bg-danger position-absolute top-0 end-0 m-2">-20%</span>' : ''}
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${productName}</h5>
+                            <p class="card-text text-muted small">${productDesc}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="fw-bold">€${productPrice.toFixed(2).replace('.', ',')}</span>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" onclick="addToWishlist(${i})">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+            
+            document.getElementById('product-grid').innerHTML = productsHtml;
+        });
+    </script>
+    
+    <style>
+        /* Stili aggiuntivi per la pagina categoria */
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px #0d6efd;
+        }
+        
+        /* Stile per i filtri attivi */
+        .btn-outline-secondary.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+    </style>
+</body>
+</html> 
