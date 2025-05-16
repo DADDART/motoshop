@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - MotoShop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .admin-sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #212529;
+        }
+        .admin-content {
+            padding: 20px;
+        }
+        .admin-sidebar .nav-link {
+            color: rgba(255,255,255,.75);
+            padding: 12px 20px;
+            margin-bottom: 5px;
+        }
+        .admin-sidebar .nav-link:hover, 
+        .admin-sidebar .nav-link.active {
+            color: #fff;
+            background-color: rgba(255,255,255,.1);
+        }
+        .admin-sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        .card-dashboard {
+            border-left: 4px solid;
+            border-radius: 4px;
+        }
+        .card-dashboard .text-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .card-dashboard .text-label {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .card-revenue { border-color: #28a745; }
+        .card-orders { border-color: #17a2b8; }
+        .card-users { border-color: #ffc107; }
+        .card-products { border-color: #dc3545; }
+        .product-image-small {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+        #loginSection {
+            max-width: 400px;
+            margin: 80px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">MotoShop Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item" id="nav-dashboard">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center" id="userInfo">
+                    <span class="text-light me-3 d-none" id="userWelcome">Benvenuto, <span id="userName"></span></span>
+                    <button class="btn btn-outline-light d-none" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <div class="container" id="loginSection">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Login Amministratore</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger d-none" id="loginError"></div>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Accedi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="container-fluid d-none" id="adminPanel">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 admin-sidebar p-0">
+                <nav class="navbar navbar-dark bg-dark">
+                    <div class="container-fluid">
+                        <span class="navbar-brand mb-0 h1">Menu Admin</span>
+                    </div>
+                </nav>
+                <div class="nav flex-column">
+                    <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="#products" data-section="products">
+                        <i class="bi bi-box-seam"></i> Prodotti
+                    </a>
+                    <a class="nav-link" href="#categories" data-section="categories">
+                        <i class="bi bi-tags"></i> Categorie
+                    </a>
+                    <a class="nav-link" href="#orders" data-section="orders">
+                        <i class="bi bi-cart3"></i> Ordini
+                    </a>
+                    <a class="nav-link" href="#users" data-section="users">
+                        <i class="bi bi-people"></i> Utenti
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 admin-content">
+                <!-- Dashboard Section -->
+                <div class="section active" id="dashboard-section">
+                    <h2 class="mb-4">Dashboard</h2>
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card card-dashboard card-revenue">
+                                <div class="card-body">
+                                    <div class="text-value" id="totalRevenue">€0</div>
+                                    <div class="text-label">Ricavi Totali</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card card-dashboard card-orders">
+                                <div class="card-body">
+                                    <div class="text-value" id="totalOrders">0</div>
+                                    <div class="text-label">Ordini Totali</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card card-dashboard card-users">
+                                <div class="card-body">
+                                    <div class="text-value" id="totalUsers">0</div>
+                                    <div class="text-label">Utenti Registrati</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3 mb-4">
+                            <div class="card card-dashboard card-products">
+                                <div class="card-body">
+                                    <div class="text-value" id="totalProducts">0</div>
+                                    <div class="text-label">Prodotti</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Ultimi Ordini</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="recentOrdersTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Cliente</th>
+                                                    <th>Data</th>
+                                                    <th>Totale</th>
+                                                    <th>Stato</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Caricamento...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Prodotti Più Venduti</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="topProductsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Prodotto</th>
+                                                    <th>Categoria</th>
+                                                    <th>Vendite</th>
+                                                    <th>Ricavi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4" class="text-center">Caricamento...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="section d-none" id="products-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Gestione Prodotti</h2>
+                        <button class="btn btn-primary" id="addProductBtn">
+                            <i class="bi bi-plus-lg"></i> Nuovo Prodotto
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="productsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Immagine</th>
+                                            <th>Nome</th>
+                                            <th>Categoria</th>
+                                            <th>Prezzo</th>
+                                            <th>Disponibilità</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Caricamento...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Section -->
+                <div class="section d-none" id="categories-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Gestione Categorie</h2>
+                        <button class="btn btn-primary" id="addCategoryBtn">
+                            <i class="bi bi-plus-lg"></i> Nuova Categoria
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="categoriesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Slug</th>
+                                            <th>Descrizione</th>
+                                            <th>N° Prodotti</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="5" class="text-center">Caricamento...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div class="section d-none" id="orders-section">
+                    <h2 class="mb-4">Gestione Ordini</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="ordersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Cliente</th>
+                                            <th>Data</th>
+                                            <th>Totale</th>
+                                            <th>Stato</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Caricamento...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div class="section d-none" id="users-section">
+                    <h2 class="mb-4">Gestione Utenti</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nome</th>
+                                            <th>Email</th>
+                                            <th>Ruolo</th>
+                                            <th>Registrato il</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Caricamento...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Nuovo Prodotto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="productName" class="form-label">Nome Prodotto</label>
+                                <input type="text" class="form-control" id="productName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productCategory" class="form-label">Categoria</label>
+                                <select class="form-select" id="productCategory" required>
+                                    <option value="">Seleziona categoria</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="productPrice" class="form-label">Prezzo (€)</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="productPrice" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productStock" class="form-label">Disponibilità</label>
+                                <input type="number" min="0" class="form-control" id="productStock" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">URL Immagine</label>
+                            <input type="text" class="form-control" id="productImage">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="productDescription" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="saveProductBtn">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalTitle">Nuova Categoria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <input type="hidden" id="categoryId">
+                        <div class="mb-3">
+                            <label for="categoryName" class="form-label">Nome Categoria</label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categorySlug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="categorySlug" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryDescription" class="form-label">Descrizione</label>
+                            <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="saveCategoryBtn">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dettaglio Ordine #<span id="orderDetailId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Informazioni Cliente</h6>
+                            <p><strong>Nome:</strong> <span id="orderCustomerName"></span></p>
+                            <p><strong>Email:</strong> <span id="orderCustomerEmail"></span></p>
+                            <p><strong>Telefono:</strong> <span id="orderCustomerPhone"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Informazioni Spedizione</h6>
+                            <p><strong>Indirizzo:</strong> <span id="orderShippingAddress"></span></p>
+                            <p><strong>Città:</strong> <span id="orderShippingCity"></span></p>
+                            <p><strong>CAP:</strong> <span id="orderShippingZip"></span></p>
+                        </div>
+                    </div>
+
+                    <h6>Prodotti</h6>
+                    <div class="table-responsive">
+                        <table class="table" id="orderItemsTable">
+                            <thead>
+                                <tr>
+                                    <th>Prodotto</th>
+                                    <th>Prezzo</th>
+                                    <th>Quantità</th>
+                                    <th>Totale</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="orderStatus" class="form-label">Stato Ordine</label>
+                                <select class="form-select" id="orderStatus">
+                                    <option value="pending">In attesa</option>
+                                    <option value="processing">In elaborazione</option>
+                                    <option value="shipped">Spedito</option>
+                                    <option value="delivered">Consegnato</option>
+                                    <option value="cancelled">Annullato</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><strong>Subtotale:</strong> €<span id="orderSubtotal"></span></p>
+                            <p><strong>Spedizione:</strong> €<span id="orderShipping"></span></p>
+                            <h5><strong>Totale:</strong> €<span id="orderTotal"></span></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="button" class="btn btn-primary" id="updateOrderStatusBtn">Aggiorna Stato</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalTitle">Modifica Utente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userName" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="userFirstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="userLastName" class="form-label">Cognome</label>
+                                <input type="text" class="form-control" id="userLastName" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userRole" class="form-label">Ruolo</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="user">Utente</option>
+                                <option value="admin">Amministratore</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" id="saveUserBtn">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma Eliminazione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Sei sicuro di voler eliminare <span id="deleteItemName"></span>?</p>
+                    <p class="text-danger">Questa azione non può essere annullata.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html> 
