@@ -109,6 +109,53 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Endpoint di diagnostica per Render
+app.get('/render-debug', (req, res) => {
+  // Raccoglie informazioni sull'ambiente
+  const debugInfo = {
+    environment: process.env.NODE_ENV,
+    workingDirectory: process.cwd(),
+    dirname: __dirname,
+    files: {
+      rootDirectory: fs.existsSync(process.cwd()) ? fs.readdirSync(process.cwd()) : 'Non accessibile',
+      srcDirectory: fs.existsSync(path.join(process.cwd(), 'src')) ? fs.readdirSync(path.join(process.cwd(), 'src')) : 'Non accessibile'
+    },
+    paths: {
+      production: {
+        path: PRODUCTION_FILES,
+        exists: fs.existsSync(PRODUCTION_FILES),
+        files: fs.existsSync(PRODUCTION_FILES) ? fs.readdirSync(PRODUCTION_FILES) : 'Non accessibile'
+      },
+      local: {
+        path: LOCAL_FILES,
+        exists: fs.existsSync(LOCAL_FILES),
+        files: fs.existsSync(LOCAL_FILES) ? fs.readdirSync(LOCAL_FILES) : 'Non accessibile'
+      }
+    },
+    motoshopDirectory: fs.existsSync(path.join(process.cwd(), 'motoshop')) ? {
+      exists: true,
+      files: fs.readdirSync(path.join(process.cwd(), 'motoshop'))
+    } : {
+      exists: false,
+      message: 'Directory motoshop non trovata'
+    },
+    possiblePublicPaths: [
+      path.join(process.cwd(), 'public'),
+      path.join(process.cwd(), 'motoshop/public'),
+      path.join(__dirname, 'public'),
+      path.join(__dirname, '../public'),
+      path.join(__dirname, '../motoshop/public')
+    ].map(p => ({
+      path: p,
+      exists: fs.existsSync(p),
+      files: fs.existsSync(p) ? fs.readdirSync(p) : 'Non accessibile'
+    }))
+  };
+
+  // Ritorna le informazioni di debug come JSON
+  res.json(debugInfo);
+});
+
 // Controlla quale percorso è disponibile e configura i file statici
 if (fs.existsSync(PRODUCTION_FILES)) {
   console.log('*** USANDO PERCORSO PRODUCTION ***');
@@ -117,7 +164,14 @@ if (fs.existsSync(PRODUCTION_FILES)) {
   // Servi index.html per tutte le richieste non-API
   app.get('/', (req, res) => {
     console.log('Servendo index.html (PRODUCTION)');
-    res.sendFile(path.join(PRODUCTION_FILES, 'index.html'));
+    // Prova a servire il file index.html ma con un fallback in caso di errore
+    res.sendFile(path.join(PRODUCTION_FILES, 'index.html'), (err) => {
+      if (err) {
+        console.error('Errore nel servire index.html da PRODUCTION:', err);
+        // Fallback a HTML inline
+        res.send(getBasicHtml());
+      }
+    });
   });
 } else if (fs.existsSync(LOCAL_FILES)) {
   console.log('*** USANDO PERCORSO LOCALE ***');
@@ -126,60 +180,68 @@ if (fs.existsSync(PRODUCTION_FILES)) {
   // Servi index.html per tutte le richieste non-API
   app.get('/', (req, res) => {
     console.log('Servendo index.html (LOCAL)');
-    res.sendFile(path.join(LOCAL_FILES, 'index.html'));
+    // Prova a servire il file index.html ma con un fallback in caso di errore
+    res.sendFile(path.join(LOCAL_FILES, 'index.html'), (err) => {
+      if (err) {
+        console.error('Errore nel servire index.html da LOCAL:', err);
+        // Fallback a HTML inline
+        res.send(getBasicHtml());
+      }
+    });
   });
 } else {
   // Nessun percorso trovato - crea directory e file di fallback
-  console.log('*** NESSUN PERCORSO TROVATO - CREANDO FILE DI FALLBACK ***');
-  
-  // Lista tutti i file nella directory corrente per debugging
-  try {
-    const baseFiles = fs.readdirSync(process.cwd());
-    console.log('File in CWD:', baseFiles);
-    
-    const srcFiles = fs.readdirSync(path.join(process.cwd(), 'src'));
-    console.log('File in src:', srcFiles);
-  } catch (e) {
-    console.error('Errore nell\'elencare i file:', e.message);
-  }
+  console.log('*** NESSUN PERCORSO TROVATO - USANDO HTML INLINE ***');
   
   // Route principale semplificata che mostra un messaggio di base in HTML
   app.get('/', (req, res) => {
     console.log('Servendo pagina HTML di base');
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="it">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>MotoShop</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-            h1 { color: #333; }
-            .container { max-width: 800px; margin: 0 auto; }
-            .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-            .btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 5px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Benvenuto al MotoShop!</h1>
+    res.send(getBasicHtml());
+  });
+}
+
+// Funzione per generare l'HTML di base
+function getBasicHtml() {
+  return `
+    <!DOCTYPE html>
+    <html lang="it">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MotoShop</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+          h1 { color: #333; }
+          .container { max-width: 800px; margin: 0 auto; }
+          .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+          .btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 5px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Benvenuto al MotoShop!</h1>
+          <div class="card">
+            <h2>MotoShop è online</h2>
+            <p>Questa è la pagina principale dell'e-commerce per prodotti motociclistici.</p>
+            <p>Per accedere alle API del sito, visita la <a href="/api">/api</a>.</p>
             <div class="card">
-              <h2>Problemi con il frontend</h2>
-              <p>Abbiamo rilevato un problema nel caricamento dei file statici del frontend.</p>
-              <p>I tecnici stanno lavorando per risolvere il problema.</p>
-              <p>Nel frattempo, puoi accedere alle nostre API utilizzando gli endpoint sotto indicati:</p>
+              <h3>Prodotti in evidenza:</h3>
               <ul>
-                <li><a href="/api">/api</a> - Informazioni generali API</li>
-                <li><a href="/api/products">/api/products</a> - Lista prodotti</li>
-                <li><a href="/api/categories">/api/categories</a> - Lista categorie</li>
+                <li><a href="/api/products/1">Casco Integrale XR-800</a></li>
+                <li><a href="/api/products/2">Giacca in Pelle Touring Pro</a></li>
+                <li><a href="/api/products/3">Guanti Estivi Air Flow</a></li>
               </ul>
+              <p><a href="/api/products" class="btn">Visualizza tutti i prodotti</a></p>
+            </div>
+            <div class="card">
+              <h3>Diagnostica:</h3>
+              <p>Per vedere informazioni dettagliate sull'ambiente e sui percorsi, visita la <a href="/render-debug">/render-debug</a>.</p>
             </div>
           </div>
-        </body>
-      </html>
-    `);
-  });
+        </div>
+      </body>
+    </html>
+  `;
 }
 
 // Route di test
@@ -601,39 +663,7 @@ const startServer = async () => {
       res.sendFile(path.join(LOCAL_FILES, 'index.html'));
     } else {
       // Se nessun percorso esiste, mostra il messaggio HTML di base
-      res.send(`
-        <!DOCTYPE html>
-        <html lang="it">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>MotoShop</title>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-              h1 { color: #333; }
-              .container { max-width: 800px; margin: 0 auto; }
-              .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-              .btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 5px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>Benvenuto al MotoShop!</h1>
-              <div class="card">
-                <h2>Problemi con il frontend</h2>
-                <p>Abbiamo rilevato un problema nel caricamento dei file statici del frontend.</p>
-                <p>I tecnici stanno lavorando per risolvere il problema.</p>
-                <p>Nel frattempo, puoi accedere alle nostre API utilizzando gli endpoint sotto indicati:</p>
-                <ul>
-                  <li><a href="/api">/api</a> - Informazioni generali API</li>
-                  <li><a href="/api/products">/api/products</a> - Lista prodotti</li>
-                  <li><a href="/api/categories">/api/categories</a> - Lista categorie</li>
-                </ul>
-              </div>
-            </div>
-          </body>
-        </html>
-      `);
+      res.send(getBasicHtml());
     }
   });
 
