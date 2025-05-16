@@ -223,15 +223,13 @@ function getBasicHtml() {
           <div class="card">
             <h2>MotoShop è online</h2>
             <p>Questa è la pagina principale dell'e-commerce per prodotti motociclistici.</p>
-            <p>Per accedere alle API del sito, visita la <a href="/api">/api</a>.</p>
             <div class="card">
-              <h3>Prodotti in evidenza:</h3>
+              <h3>API del sito:</h3>
               <ul>
-                <li><a href="/api/products/1">Casco Integrale XR-800</a></li>
-                <li><a href="/api/products/2">Giacca in Pelle Touring Pro</a></li>
-                <li><a href="/api/products/3">Guanti Estivi Air Flow</a></li>
+                <li><a href="/api">/api</a> - Informazioni generali dell'API</li>
+                <li><a href="/api/products">/api/products</a> - Lista di tutti i prodotti</li>
+                <li><a href="/api/categories">/api/categories</a> - Lista di tutte le categorie</li>
               </ul>
-              <p><a href="/api/products" class="btn">Visualizza tutti i prodotti</a></p>
             </div>
             <div class="card">
               <h3>Diagnostica:</h3>
@@ -271,39 +269,21 @@ app.get('/api/products', async (req, res) => {
           message: 'Lista prodotti dal database',
           data: { products }
         });
+      } else {
+        // Nessun prodotto nel database
+        return res.json({
+          success: true,
+          message: 'Nessun prodotto disponibile',
+          data: { products: [] }
+        });
       }
     }
     
-    // Fallback ai dati statici se il database non è disponibile o vuoto
-    console.log('Utilizzando dati di prodotto statici');
-    res.json({
-      success: true,
-      message: 'Lista prodotti di esempio (dati statici)',
-      data: {
-        products: [
-          {
-            id: '1',
-            nome: 'Casco Integrale XR-800',
-            prezzo: 249.99,
-            descrizione: 'Casco integrale di alta qualità per massima protezione',
-            immagine: 'casco1.jpg'
-          },
-          {
-            id: '2',
-            nome: 'Giacca in Pelle Touring Pro',
-            prezzo: 349.99,
-            descrizione: 'Giacca in pelle per touring con protezioni certificate',
-            immagine: 'giacca1.jpg'
-          },
-          {
-            id: '3',
-            nome: 'Guanti Estivi Air Flow',
-            prezzo: 59.99,
-            descrizione: 'Guanti estivi con ottima ventilazione',
-            immagine: 'guanti1.jpg'
-          }
-        ]
-      }
+    // Database non disponibile
+    res.status(503).json({
+      success: false,
+      message: 'Database non disponibile',
+      data: { products: [] }
     });
   } catch (err) {
     console.error('Errore nel recupero dei prodotti:', err.message);
@@ -327,36 +307,21 @@ app.get('/api/categories', async (req, res) => {
           message: 'Lista categorie dal database',
           data: { categories }
         });
+      } else {
+        // Nessuna categoria nel database
+        return res.json({
+          success: true,
+          message: 'Nessuna categoria disponibile',
+          data: { categories: [] }
+        });
       }
     }
     
-    // Fallback ai dati statici se il database non è disponibile o vuoto
-    console.log('Utilizzando dati di categoria statici');
-    res.json({
-      success: true,
-      message: 'Lista categorie di esempio (dati statici)',
-      data: {
-        categories: [
-          {
-            id: '1',
-            nome: 'Caschi',
-            slug: 'caschi',
-            descrizione: 'Caschi per motociclisti'
-          },
-          {
-            id: '2',
-            nome: 'Giacche',
-            slug: 'giacche',
-            descrizione: 'Giacche per motociclisti'
-          },
-          {
-            id: '3',
-            nome: 'Guanti',
-            slug: 'guanti',
-            descrizione: 'Guanti per motociclisti'
-          }
-        ]
-      }
+    // Database non disponibile
+    res.status(503).json({
+      success: false,
+      message: 'Database non disponibile',
+      data: { categories: [] }
     });
   } catch (err) {
     console.error('Errore nel recupero delle categorie:', err.message);
@@ -392,58 +357,37 @@ app.get('/api/products/:id', async (req, res) => {
             message: 'Dettagli prodotto dal database',
             data: { product }
           });
+        } else {
+          // Prodotto non trovato
+          return res.status(404).json({
+            success: false,
+            message: 'Prodotto non trovato',
+            errorCode: 'PRODUCT_NOT_FOUND'
+          });
         }
       } catch (dbError) {
         console.error('Errore nella ricerca del prodotto nel database:', dbError.message);
-        // Continua con i dati statici
+        return res.status(500).json({ 
+          success: false, 
+          message: 'Errore nel recupero del prodotto', 
+          error: dbError.message 
+        });
       }
     }
     
-    // Dati statici di esempio
-    const staticProducts = [
-      {
-        id: '1',
-        nome: 'Casco Integrale XR-800',
-        prezzo: 249.99,
-        descrizione: 'Casco integrale di alta qualità per massima protezione',
-        immagine: 'casco1.jpg'
-      },
-      {
-        id: '2',
-        nome: 'Giacca in Pelle Touring Pro',
-        prezzo: 349.99,
-        descrizione: 'Giacca in pelle per touring con protezioni certificate',
-        immagine: 'giacca1.jpg'
-      },
-      {
-        id: '3',
-        nome: 'Guanti Estivi Air Flow',
-        prezzo: 59.99,
-        descrizione: 'Guanti estivi con ottima ventilazione',
-        immagine: 'guanti1.jpg'
-      }
-    ];
-    
-    // Cerca nei dati statici
-    const staticProduct = staticProducts.find(p => p.id === productId);
-    
-    if (staticProduct) {
-      console.log('Prodotto trovato nei dati statici:', staticProduct.nome);
-      res.json({
-        success: true,
-        message: 'Dettagli prodotto (dati statici)',
-        data: { product: staticProduct }
-      });
-    } else {
-      res.status(404).json({
-        success: false,
-        message: 'Prodotto non trovato',
-        errorCode: 'PRODUCT_NOT_FOUND'
-      });
-    }
+    // Database non disponibile
+    res.status(503).json({
+      success: false,
+      message: 'Database non disponibile',
+      errorCode: 'DATABASE_NOT_AVAILABLE'
+    });
   } catch (err) {
     console.error('Errore nel recupero del prodotto:', err.message);
-    res.status(500).json({ success: false, message: 'Errore interno del server', error: err.message });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Errore interno del server', 
+      error: err.message 
+    });
   }
 });
 
@@ -504,45 +448,33 @@ try {
         const products = await Product.find({}).lean();
         
         if (products && products.length > 0) {
-          console.log('Recuperati prodotti dal database:', products.length);
+          console.log('Recuperati prodotti dal database (mongoose):', products.length);
           return res.json({
             success: true,
-            message: 'Lista prodotti dal database',
+            message: 'Lista prodotti dal database (mongoose)',
+            data: { products }
+          });
+        }
+      } else if (db) {
+        // Prova con il client MongoDB originale
+        const productsCollection = db.collection('products');
+        const products = await productsCollection.find({}).toArray();
+        
+        if (products && products.length > 0) {
+          console.log('Recuperati prodotti dal database (mongodb):', products.length);
+          return res.json({
+            success: true,
+            message: 'Lista prodotti dal database (mongodb)',
             data: { products }
           });
         }
       }
       
-      // Fallback ai dati statici se il database non è disponibile o vuoto
-      console.log('Utilizzando dati di prodotto statici');
+      // Nessun prodotto trovato
       res.json({
         success: true,
-        message: 'Lista prodotti di esempio (dati statici)',
-        data: {
-          products: [
-            {
-              id: '1',
-              nome: 'Casco Integrale XR-800',
-              prezzo: 249.99,
-              descrizione: 'Casco integrale di alta qualità per massima protezione',
-              immagine: 'casco1.jpg'
-            },
-            {
-              id: '2',
-              nome: 'Giacca in Pelle Touring Pro',
-              prezzo: 349.99,
-              descrizione: 'Giacca in pelle per touring con protezioni certificate',
-              immagine: 'giacca1.jpg'
-            },
-            {
-              id: '3',
-              nome: 'Guanti Estivi Air Flow',
-              prezzo: 59.99,
-              descrizione: 'Guanti estivi con ottima ventilazione',
-              immagine: 'guanti1.jpg'
-            }
-          ]
-        }
+        message: 'Nessun prodotto disponibile',
+        data: { products: [] }
       });
     } catch (err) {
       console.error('Errore nel recupero dei prodotti:', err.message);
@@ -559,42 +491,33 @@ try {
         const categories = await Category.find({}).lean();
         
         if (categories && categories.length > 0) {
-          console.log('Recuperate categorie dal database:', categories.length);
+          console.log('Recuperate categorie dal database (mongoose):', categories.length);
           return res.json({
             success: true,
-            message: 'Lista categorie dal database',
+            message: 'Lista categorie dal database (mongoose)',
+            data: { categories }
+          });
+        }
+      } else if (db) {
+        // Prova con il client MongoDB originale
+        const categoriesCollection = db.collection('categories');
+        const categories = await categoriesCollection.find({}).toArray();
+        
+        if (categories && categories.length > 0) {
+          console.log('Recuperate categorie dal database (mongodb):', categories.length);
+          return res.json({
+            success: true,
+            message: 'Lista categorie dal database (mongodb)',
             data: { categories }
           });
         }
       }
       
-      // Fallback ai dati statici se il database non è disponibile o vuoto
-      console.log('Utilizzando dati di categoria statici');
+      // Nessuna categoria trovata
       res.json({
         success: true,
-        message: 'Lista categorie di esempio (dati statici)',
-        data: {
-          categories: [
-            {
-              id: '1',
-              nome: 'Caschi',
-              slug: 'caschi',
-              descrizione: 'Caschi per motociclisti'
-            },
-            {
-              id: '2',
-              nome: 'Giacche',
-              slug: 'giacche',
-              descrizione: 'Giacche per motociclisti'
-            },
-            {
-              id: '3',
-              nome: 'Guanti',
-              slug: 'guanti',
-              descrizione: 'Guanti per motociclisti'
-            }
-          ]
-        }
+        message: 'Nessuna categoria disponibile',
+        data: { categories: [] }
       });
     } catch (err) {
       console.error('Errore nel recupero delle categorie:', err.message);
