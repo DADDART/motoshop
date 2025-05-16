@@ -21,34 +21,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Determina il percorso corretto per i file statici
-// Questo gestisce sia lo sviluppo locale che l'ambiente di produzione
-let publicPath = path.join(__dirname, '../', 'motoshop/public');
-console.log('Percorso dei file statici:', publicPath);
+// SOLUZIONE PER RENDER: gestione diretta dei file statici
+const PRODUCTION_FILES = path.join(process.cwd(), 'motoshop/public');
+const LOCAL_FILES = path.join(__dirname, '../motoshop/public');
 
-// Prova percorsi alternativi se il percorso principale non esiste
-if (!fs.existsSync(publicPath)) {
-  console.log('Percorso principale non trovato, tentativo con percorsi alternativi');
-  
-  const possiblePaths = [
-    path.join(__dirname, '../public'),
-    path.join(__dirname, '../motoshop/public'),
-    path.join(__dirname, 'public'),
-    path.join(process.cwd(), 'public'),
-    path.join(process.cwd(), 'motoshop/public')
-  ];
-  
-  for (const testPath of possiblePaths) {
-    if (fs.existsSync(testPath)) {
-      console.log(`Percorso alternativo trovato: ${testPath}`);
-      publicPath = testPath;
-      break;
-    }
-  }
-}
-
-// Servi file statici dalla cartella public corretta
-app.use(express.static(publicPath));
+// Log dei percorsi per debugging
+console.log('AMBIENTE:', process.env.NODE_ENV);
+console.log('CWD:', process.cwd());
+console.log('DIRNAME:', __dirname);
+console.log('PRODUCTION PATH EXISTS:', fs.existsSync(PRODUCTION_FILES));
+console.log('LOCAL PATH EXISTS:', fs.existsSync(LOCAL_FILES));
 
 // Variabili globali per i database
 let dbClient = null;
@@ -107,17 +89,9 @@ const connectToMongoDB = async () => {
   }
 };
 
-// Route principale - Modificata per servire sempre l'HTML se richiesto da un browser
-app.get('/', (req, res) => {
-  console.log('Servendo index.html per la route principale');
-  // Servi la pagina index.html usando il percorso corretto
-  return res.sendFile(path.join(publicPath, 'index.html'));
-});
-
-// Nuova route specifica per l'API info
+// Configura prima le rotte API
 app.get('/api', (req, res) => {
-  // Per richieste API, restituisci il JSON informativo
-  console.log('Servendo informazioni API per la route /api');
+  console.log('Servendo API info');
   res.json({
     success: true,
     message: 'Benvenuto all\'API di MotoShop!',
@@ -134,6 +108,79 @@ app.get('/api', (req, res) => {
     }
   });
 });
+
+// Controlla quale percorso è disponibile e configura i file statici
+if (fs.existsSync(PRODUCTION_FILES)) {
+  console.log('*** USANDO PERCORSO PRODUCTION ***');
+  app.use(express.static(PRODUCTION_FILES));
+  
+  // Servi index.html per tutte le richieste non-API
+  app.get('/', (req, res) => {
+    console.log('Servendo index.html (PRODUCTION)');
+    res.sendFile(path.join(PRODUCTION_FILES, 'index.html'));
+  });
+} else if (fs.existsSync(LOCAL_FILES)) {
+  console.log('*** USANDO PERCORSO LOCALE ***');
+  app.use(express.static(LOCAL_FILES));
+  
+  // Servi index.html per tutte le richieste non-API
+  app.get('/', (req, res) => {
+    console.log('Servendo index.html (LOCAL)');
+    res.sendFile(path.join(LOCAL_FILES, 'index.html'));
+  });
+} else {
+  // Nessun percorso trovato - crea directory e file di fallback
+  console.log('*** NESSUN PERCORSO TROVATO - CREANDO FILE DI FALLBACK ***');
+  
+  // Lista tutti i file nella directory corrente per debugging
+  try {
+    const baseFiles = fs.readdirSync(process.cwd());
+    console.log('File in CWD:', baseFiles);
+    
+    const srcFiles = fs.readdirSync(path.join(process.cwd(), 'src'));
+    console.log('File in src:', srcFiles);
+  } catch (e) {
+    console.error('Errore nell\'elencare i file:', e.message);
+  }
+  
+  // Route principale semplificata che mostra un messaggio di base in HTML
+  app.get('/', (req, res) => {
+    console.log('Servendo pagina HTML di base');
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="it">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>MotoShop</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+            h1 { color: #333; }
+            .container { max-width: 800px; margin: 0 auto; }
+            .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+            .btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Benvenuto al MotoShop!</h1>
+            <div class="card">
+              <h2>Problemi con il frontend</h2>
+              <p>Abbiamo rilevato un problema nel caricamento dei file statici del frontend.</p>
+              <p>I tecnici stanno lavorando per risolvere il problema.</p>
+              <p>Nel frattempo, puoi accedere alle nostre API utilizzando gli endpoint sotto indicati:</p>
+              <ul>
+                <li><a href="/api">/api</a> - Informazioni generali API</li>
+                <li><a href="/api/products">/api/products</a> - Lista prodotti</li>
+                <li><a href="/api/categories">/api/categories</a> - Lista categorie</li>
+              </ul>
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+  });
+}
 
 // Route di test
 app.get('/api/test', (req, res) => {
@@ -503,18 +550,27 @@ const startServer = async () => {
   console.log('Environment:', process.env.NODE_ENV);
   console.log('Percorso di esecuzione (cwd):', process.cwd());
   console.log('Percorso del file attuale:', __dirname);
-  console.log('Percorso che sarà usato per i file statici:', publicPath);
+  console.log('Percorso che sarà usato per i file statici:', PRODUCTION_FILES || LOCAL_FILES);
   
   // Verifica esistenza percorso
-  console.log('Il percorso dei file statici esiste?', fs.existsSync(publicPath));
+  console.log('Il percorso dei file statici esiste?', fs.existsSync(PRODUCTION_FILES) || fs.existsSync(LOCAL_FILES));
   
-  try {
-    // Elenca i file nel percorso per verificare che sia corretto
-    const files = fs.readdirSync(publicPath);
-    console.log('File nel percorso dei file statici:', files);
-  } catch (err) {
-    console.error('Errore nel leggere i file nel percorso:', err.message);
-    
+  // Se nessun percorso esiste, non provare ad accedervi
+  if (fs.existsSync(PRODUCTION_FILES)) {
+    try {
+      const files = fs.readdirSync(PRODUCTION_FILES);
+      console.log('File nel percorso PRODUCTION:', files);
+    } catch (err) {
+      console.error('Errore nel leggere i file nel percorso PRODUCTION:', err.message);
+    }
+  } else if (fs.existsSync(LOCAL_FILES)) {
+    try {
+      const files = fs.readdirSync(LOCAL_FILES);
+      console.log('File nel percorso LOCAL:', files);
+    } catch (err) {
+      console.error('Errore nel leggere i file nel percorso LOCAL:', err.message);
+    }
+  } else {
     // Elenca i file nella directory di base
     try {
       const baseFiles = fs.readdirSync(process.cwd());
@@ -537,7 +593,48 @@ const startServer = async () => {
     
     // Altrimenti, servi la pagina principale
     console.log('Fallback: Servendo index.html per:', req.url);
-    res.sendFile(path.join(publicPath, 'index.html'));
+    
+    // Controlla quale percorso esiste
+    if (fs.existsSync(PRODUCTION_FILES)) {
+      res.sendFile(path.join(PRODUCTION_FILES, 'index.html'));
+    } else if (fs.existsSync(LOCAL_FILES)) {
+      res.sendFile(path.join(LOCAL_FILES, 'index.html'));
+    } else {
+      // Se nessun percorso esiste, mostra il messaggio HTML di base
+      res.send(`
+        <!DOCTYPE html>
+        <html lang="it">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>MotoShop</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+              h1 { color: #333; }
+              .container { max-width: 800px; margin: 0 auto; }
+              .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+              .btn { display: inline-block; background: #333; color: #fff; padding: 8px 16px; text-decoration: none; border-radius: 5px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>Benvenuto al MotoShop!</h1>
+              <div class="card">
+                <h2>Problemi con il frontend</h2>
+                <p>Abbiamo rilevato un problema nel caricamento dei file statici del frontend.</p>
+                <p>I tecnici stanno lavorando per risolvere il problema.</p>
+                <p>Nel frattempo, puoi accedere alle nostre API utilizzando gli endpoint sotto indicati:</p>
+                <ul>
+                  <li><a href="/api">/api</a> - Informazioni generali API</li>
+                  <li><a href="/api/products">/api/products</a> - Lista prodotti</li>
+                  <li><a href="/api/categories">/api/categories</a> - Lista categorie</li>
+                </ul>
+              </div>
+            </div>
+          </body>
+        </html>
+      `);
+    }
   });
 
   // Gestione errori 404 per risorse non gestite
