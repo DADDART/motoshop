@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 // Carica variabili d'ambiente
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -22,8 +23,29 @@ app.use(express.urlencoded({ extended: true }));
 
 // Determina il percorso corretto per i file statici
 // Questo gestisce sia lo sviluppo locale che l'ambiente di produzione
-const publicPath = path.join(__dirname, '../', process.env.NODE_ENV === 'production' ? 'motoshop/public' : 'motoshop/public');
+let publicPath = path.join(__dirname, '../', 'motoshop/public');
 console.log('Percorso dei file statici:', publicPath);
+
+// Prova percorsi alternativi se il percorso principale non esiste
+if (!fs.existsSync(publicPath)) {
+  console.log('Percorso principale non trovato, tentativo con percorsi alternativi');
+  
+  const possiblePaths = [
+    path.join(__dirname, '../public'),
+    path.join(__dirname, '../motoshop/public'),
+    path.join(__dirname, 'public'),
+    path.join(process.cwd(), 'public'),
+    path.join(process.cwd(), 'motoshop/public')
+  ];
+  
+  for (const testPath of possiblePaths) {
+    if (fs.existsSync(testPath)) {
+      console.log(`Percorso alternativo trovato: ${testPath}`);
+      publicPath = testPath;
+      break;
+    }
+  }
+}
 
 // Servi file statici dalla cartella public corretta
 app.use(express.static(publicPath));
@@ -477,6 +499,31 @@ const startServer = async () => {
   // Connettiti al database
   await connectToMongoDB();
   
+  // Debug dei percorsi disponibili
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('Percorso di esecuzione (cwd):', process.cwd());
+  console.log('Percorso del file attuale:', __dirname);
+  console.log('Percorso che sarà usato per i file statici:', publicPath);
+  
+  // Verifica esistenza percorso
+  console.log('Il percorso dei file statici esiste?', fs.existsSync(publicPath));
+  
+  try {
+    // Elenca i file nel percorso per verificare che sia corretto
+    const files = fs.readdirSync(publicPath);
+    console.log('File nel percorso dei file statici:', files);
+  } catch (err) {
+    console.error('Errore nel leggere i file nel percorso:', err.message);
+    
+    // Elenca i file nella directory di base
+    try {
+      const baseFiles = fs.readdirSync(process.cwd());
+      console.log('File nella directory di base:', baseFiles);
+    } catch (e) {
+      console.error('Errore nel leggere i file nella directory di base:', e.message);
+    }
+  }
+
   // Imposta route di fallback come ultima cosa prima di avviare il server
   // Questo serve per gestire SPA (Single Page Application) routing
   app.get('*', (req, res) => {
