@@ -79,25 +79,52 @@ async function handleLogin(e) {
         
         const data = await response.json();
         
+        // Debug - Mostra la struttura della risposta nella console
+        console.log('Login response:', data);
+        
         if (!response.ok) {
             throw new Error(data.message || 'Errore durante il login');
         }
         
-        // Verifica sicura della proprietà role
-        if (!data.user || data.user.role !== 'admin') {
+        // Controlla la struttura della risposta e trova l'utente e il ruolo
+        let userData = data.user || data;
+        let userRole = userData.role;
+        
+        // Se il ruolo non è trovato, cerca in data.user.role o altre possibili posizioni
+        if (!userRole) {
+            if (data.user && data.user.role) {
+                userRole = data.user.role;
+            } else if (data.role) {
+                userRole = data.role;
+            }
+        }
+        
+        // Verifica se l'utente è un amministratore
+        if (!userRole || userRole !== 'admin') {
             throw new Error('Accesso riservato agli amministratori');
         }
         
-        // Salva il token e mostra il pannello admin
-        token = data.token;
+        // Salva il token - controlliamo dove potrebbe essere nel JSON
+        token = data.token || data.accessToken || '';
+        if (!token && data.user && data.user.token) {
+            token = data.user.token;
+        }
+        
+        if (!token) {
+            throw new Error('Token di autenticazione non trovato nella risposta');
+        }
+        
         localStorage.setItem('adminToken', token);
-        currentUser = data.user;
+        
+        // Salva i dati utente
+        currentUser = userData;
         
         // Nascondi errori e form login
         errorEl.classList.add('d-none');
         showAdminPanel();
         
     } catch (error) {
+        console.error('Login error:', error);
         errorEl.textContent = error.message;
         errorEl.classList.remove('d-none');
     }
@@ -114,12 +141,29 @@ async function fetchUserInfo() {
         
         const data = await response.json();
         
-        // Verifica sicura della proprietà role
-        if (!data || data.role !== 'admin') {
+        // Debug - Mostra la struttura della risposta nella console
+        console.log('User info response:', data);
+        
+        // Controlla la struttura della risposta e trova l'utente e il ruolo
+        let userData = data.user || data;
+        let userRole = userData.role;
+        
+        // Se il ruolo non è trovato, cerca in data.user.role o altre possibili posizioni
+        if (!userRole) {
+            if (data.user && data.user.role) {
+                userRole = data.user.role;
+            } else if (data.role) {
+                userRole = data.role;
+            }
+        }
+        
+        // Verifica se l'utente è un amministratore
+        if (!userRole || userRole !== 'admin') {
             throw new Error('Accesso riservato agli amministratori');
         }
         
-        currentUser = data;
+        // Salva i dati utente
+        currentUser = userData;
         showAdminPanel();
         
         // Carica la dashboard o la sezione dall'URL
@@ -133,6 +177,7 @@ async function fetchUserInfo() {
         }
         
     } catch (error) {
+        console.error('FetchUserInfo error:', error);
         handleLogout();
     }
 }
@@ -161,7 +206,15 @@ function showAdminPanel() {
     // Mostra info utente nella navbar
     const userWelcome = document.getElementById('userWelcome');
     userWelcome.classList.remove('d-none');
-    document.getElementById('userName').textContent = currentUser.firstName || currentUser.email;
+    
+    // Accesso sicuro alle proprietà dell'utente
+    if (currentUser) {
+        const userName = currentUser.firstName || currentUser.email || currentUser.username || 'Admin';
+        document.getElementById('userName').textContent = userName;
+    } else {
+        document.getElementById('userName').textContent = 'Admin';
+    }
+    
     document.getElementById('logoutBtn').classList.remove('d-none');
 }
 
