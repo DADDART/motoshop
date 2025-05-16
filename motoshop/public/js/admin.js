@@ -83,7 +83,8 @@ async function handleLogin(e) {
             throw new Error(data.message || 'Errore durante il login');
         }
         
-        if (data.user.role !== 'admin') {
+        // Verifica sicura della proprietà role
+        if (!data.user || data.user.role !== 'admin') {
             throw new Error('Accesso riservato agli amministratori');
         }
         
@@ -113,7 +114,8 @@ async function fetchUserInfo() {
         
         const data = await response.json();
         
-        if (data.role !== 'admin') {
+        // Verifica sicura della proprietà role
+        if (!data || data.role !== 'admin') {
             throw new Error('Accesso riservato agli amministratori');
         }
         
@@ -122,7 +124,13 @@ async function fetchUserInfo() {
         
         // Carica la dashboard o la sezione dall'URL
         const hash = window.location.hash.substring(1) || 'dashboard';
-        document.querySelector(`.nav-link[data-section="${hash}"]`).click();
+        const navLink = document.querySelector(`.nav-link[data-section="${hash}"]`);
+        if (navLink) {
+            navLink.click();
+        } else {
+            // Se il link non esiste, carica la dashboard
+            document.querySelector(`.nav-link[data-section="dashboard"]`)?.click();
+        }
         
     } catch (error) {
         handleLogout();
