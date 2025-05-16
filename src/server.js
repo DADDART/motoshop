@@ -20,8 +20,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servi file statici dalla cartella public
-app.use(express.static(path.join(__dirname, '../motoshop/public')));
+// Determina il percorso corretto per i file statici
+// Questo gestisce sia lo sviluppo locale che l'ambiente di produzione
+const publicPath = path.join(__dirname, '../', process.env.NODE_ENV === 'production' ? 'motoshop/public' : 'motoshop/public');
+console.log('Percorso dei file statici:', publicPath);
+
+// Servi file statici dalla cartella public corretta
+app.use(express.static(publicPath));
 
 // Variabili globali per i database
 let dbClient = null;
@@ -37,16 +42,15 @@ const connectToMongoDB = async () => {
     
     // Crea un nuovo client MongoDB con opzioni migliorate per la gestione degli errori
     const client = new MongoClient(connectionString, {
-      serverSelectionTimeoutMS: 10000, // 10 secondi
-      socketTimeoutMS: 45000, // 45 secondi
-      connectTimeoutMS: 15000, // 15 secondi
+      serverSelectionTimeoutMS: 30000, // Aumentato a 30 secondi
+      socketTimeoutMS: 60000, // Aumentato a 60 secondi
+      connectTimeoutMS: 30000, // Aumentato a 30 secondi
       maxIdleTimeMS: 120000, // 2 minuti
       maxPoolSize: 10, // Massimo 10 connessioni nel pool
       retryWrites: true,
       retryReads: true,
-      ssl: true,
-      tlsAllowInvalidCertificates: true, // Permetti certificati non validi (solo per ambiente di sviluppo)
-      tlsAllowInvalidHostnames: true // Permetti hostname non validi (solo per ambiente di sviluppo)
+      ssl: true
+      // Rimossi i flag tlsAllowInvalidCertificates e tlsAllowInvalidHostnames che potrebbero causare problemi
     });
     
     // Connetti al server MongoDB
@@ -81,29 +85,32 @@ const connectToMongoDB = async () => {
   }
 };
 
-// Route principale
+// Route principale - Modificata per servire sempre l'HTML se richiesto da un browser
 app.get('/', (req, res) => {
-  if (req.headers.accept && req.headers.accept.includes('text/html')) {
-    // Se la richiesta vuole HTML, servi la pagina index.html
-    res.sendFile(path.join(__dirname, '../motoshop/public/index.html'));
-  } else {
-    // Altrimenti, restituisci il JSON informativo API
-    res.json({
-      success: true,
-      message: 'Benvenuto all\'API di MotoShop!',
-      versione: '1.0.0',
-      databaseConnesso: db !== null,
-      endpoints: {
-        auth: '/api/auth',
-        users: '/api/users',
-        products: '/api/products',
-        categories: '/api/categories',
-        orders: '/api/orders',
-        payments: '/api/payments',
-        admin: '/api/admin'
-      }
-    });
-  }
+  console.log('Servendo index.html per la route principale');
+  // Servi la pagina index.html usando il percorso corretto
+  return res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+// Nuova route specifica per l'API info
+app.get('/api', (req, res) => {
+  // Per richieste API, restituisci il JSON informativo
+  console.log('Servendo informazioni API per la route /api');
+  res.json({
+    success: true,
+    message: 'Benvenuto all\'API di MotoShop!',
+    versione: '1.0.0',
+    databaseConnesso: db !== null,
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      products: '/api/products',
+      categories: '/api/categories',
+      orders: '/api/orders',
+      payments: '/api/payments',
+      admin: '/api/admin'
+    }
+  });
 });
 
 // Route di test
@@ -248,31 +255,61 @@ app.get('/api/products/:id', async (req, res) => {
         }
         
         if (product) {
+          console.log('Prodotto trovato nel database:', product.nome || product.id);
           return res.json({
             success: true,
-            message: 'Dettaglio prodotto dal database',
+            message: 'Dettagli prodotto dal database',
             data: { product }
           });
         }
       } catch (dbError) {
-        console.error('Errore nel recupero del prodotto dal database:', dbError.message);
+        console.error('Errore nella ricerca del prodotto nel database:', dbError.message);
+        // Continua con i dati statici
       }
     }
     
-    // Fallback ai dati statici
-    res.json({
-      success: true,
-      message: 'Dettaglio prodotto (dati statici)',
-      data: {
-        product: {
-          id: productId,
-          nome: 'Prodotto ' + productId,
-          prezzo: 99.99,
-          descrizione: 'Questo è il dettaglio del prodotto ' + productId,
-          immagine: 'prodotto' + productId + '.jpg'
-        }
+    // Dati statici di esempio
+    const staticProducts = [
+      {
+        id: '1',
+        nome: 'Casco Integrale XR-800',
+        prezzo: 249.99,
+        descrizione: 'Casco integrale di alta qualità per massima protezione',
+        immagine: 'casco1.jpg'
+      },
+      {
+        id: '2',
+        nome: 'Giacca in Pelle Touring Pro',
+        prezzo: 349.99,
+        descrizione: 'Giacca in pelle per touring con protezioni certificate',
+        immagine: 'giacca1.jpg'
+      },
+      {
+        id: '3',
+        nome: 'Guanti Estivi Air Flow',
+        prezzo: 59.99,
+        descrizione: 'Guanti estivi con ottima ventilazione',
+        immagine: 'guanti1.jpg'
       }
-    });
+    ];
+    
+    // Cerca nei dati statici
+    const staticProduct = staticProducts.find(p => p.id === productId);
+    
+    if (staticProduct) {
+      console.log('Prodotto trovato nei dati statici:', staticProduct.nome);
+      res.json({
+        success: true,
+        message: 'Dettagli prodotto (dati statici)',
+        data: { product: staticProduct }
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'Prodotto non trovato',
+        errorCode: 'PRODUCT_NOT_FOUND'
+      });
+    }
   } catch (err) {
     console.error('Errore nel recupero del prodotto:', err.message);
     res.status(500).json({ success: false, message: 'Errore interno del server', error: err.message });
@@ -435,41 +472,53 @@ try {
   });
 }
 
-// Gestione errori 404
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Risorsa non trovata'
-  });
-});
-
-// Gestione errori globale
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'Si è verificato un errore interno',
-    error: process.env.NODE_ENV === 'development' ? err.message : {}
-  });
-});
-
-// Avvia la connessione al database e poi il server
-(async () => {
+// Avvia il server
+const startServer = async () => {
+  // Connettiti al database
   await connectToMongoDB();
   
-  // Avvio del server
-  const server = app.listen(PORT, () => {
-    console.log(`Server in esecuzione sulla porta ${PORT} con connessione a MongoDB Atlas`);
+  // Imposta route di fallback come ultima cosa prima di avviare il server
+  // Questo serve per gestire SPA (Single Page Application) routing
+  app.get('*', (req, res) => {
+    // Se la richiesta è per una risorsa API, lasciala passare
+    if (req.url.startsWith('/api/')) {
+      return res.status(404).json({
+        success: false,
+        message: 'API endpoint non trovato'
+      });
+    }
+    
+    // Altrimenti, servi la pagina principale
+    console.log('Fallback: Servendo index.html per:', req.url);
+    res.sendFile(path.join(publicPath, 'index.html'));
+  });
+
+  // Gestione errori 404 per risorse non gestite
+  app.use((req, res, next) => {
+    res.status(404).json({
+      success: false,
+      message: 'Risorsa non trovata',
+      path: req.path
+    });
   });
   
-  // Gestione errori del server
-  server.on('error', (error) => {
-    console.error('Errore del server:', error);
-    if (error.code === 'EADDRINUSE') {
-      console.error(`La porta ${PORT} è già in uso. Prova con un'altra porta.`);
-      process.exit(1);
-    }
+  // Gestione errori generici
+  app.use((err, req, res, next) => {
+    console.error('Errore non gestito:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Errore interno del server',
+      error: process.env.NODE_ENV === 'production' ? 'Dettagli dell\'errore non disponibili in produzione' : err.message
+    });
   });
-})();
+
+  // Avvia il server
+  app.listen(PORT, () => {
+    console.log(`Server in esecuzione sulla porta ${PORT}`);
+    console.log(`Per visualizzare il frontend accedi a: http://localhost:${PORT}`);
+  });
+};
+
+startServer();
 
 module.exports = app; // Per testing 
